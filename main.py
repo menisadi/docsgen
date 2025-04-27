@@ -5,14 +5,12 @@ from pydantic import BaseModel
 from pydantic_ai import Agent
 
 
-# 1. Define the structure of a parameter doc
 class ParamDoc(BaseModel):
     name: str
     type: str
     desc: str
 
 
-# 2. Define the full suggestion schema
 class DocSuggestion(BaseModel):
     name: str
     summary: str
@@ -22,7 +20,6 @@ class DocSuggestion(BaseModel):
     full_docstring: str
 
 
-# 3. Initialize the agent to return DocSuggestion
 agent = Agent(
     "groq:llama-3.3-70b-versatile",
     output_type=DocSuggestion,
@@ -113,4 +110,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
