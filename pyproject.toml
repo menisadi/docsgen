@@ -1,0 +1,20 @@
+[project]
+name = "docsgen"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "astor>=0.8.1",
+    "logfire>=3.14.1",
+    "pydantic>=2.11.3",
+    "pydantic-ai>=0.1.6",
+]
+
+[tool.pyright]
+venv = ".venv"
+venvPath = "."
+exclude = ["./git", "./__pycache__", "./venv"]
+typeCheckingMode = "standard"
+reportAssignmentType = "warning"
+reportOperatorIssue = "warning"
