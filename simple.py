@@ -20,17 +20,18 @@ agent = Agent(
 )
 
 
-def extract_functions(source: str):
+def extract_functions(source: str) -> tuple[list[str], int]:
     tree = ast.parse(source)
     funcs = []
+    total_funcs_count = 0
     for node in tree.body:
         if isinstance(node, ast.FunctionDef):
-            # only keep those without a docstring
+            total_funcs_count += 1
             if ast.get_docstring(node) is None:
                 # grab text from def ... through end_lineno
                 lines = source.splitlines()[node.lineno - 1 : node.end_lineno]
                 funcs.append("\n".join(lines))
-    return funcs
+    return funcs, total_funcs_count
 
 
 def suggest_docstring(func_code: str) -> DocSuggestion:
@@ -75,23 +76,20 @@ def main():
     args = parse_args()
     with open(args.input_file, "r") as f:
         src = f.read()
-    funcs = extract_functions(src)
+    funcs, funcs_count = extract_functions(src)
     if not funcs:
-        print("✔️ All functions already have docstrings!")
+        print("All functions already have docstrings!")
         return
+
+    print(f"{len(funcs)} missing docstring (out of {funcs_count})")
 
     with open("suggestions.txt", "w") as out:
         for fn in funcs:
             doc = suggest_docstring(fn)
-            out.write(f"Function: {fn.split('(')[0]}\n")
+            # Start after 'def ' until the first parenthesis
+            out.write(f"Function: {fn.split('(')[0][4:]}\n")
             out.write(doc.full_docstring)
             out.write("\n\n")
-
-    # suggestions = [suggest_docstring(fn) for fn in funcs]
-
-    # with open(args.output, "w") as out:
-    #     for s in suggestions:
-    #         out.write(f"{s.full_docstring}\n\n")
 
     print(f"Generated {len(funcs)} suggestion(s) → {args.output}")
 
