@@ -22,7 +22,8 @@ Return only the docstring (including the triple-quotes).
 """
 
 agent = Agent(
-    "groq:llama-3.3-70b-versatile",
+    "anthropic:claude-3-5-sonnet-latest",
+    # "groq:llama-3.3-70b-versatile",
     output_type=DocSuggestion,
     system_prompt=SYS_PROMPT,
 )
@@ -91,13 +92,8 @@ def main() -> None:
     total_missing = total_functions = 0
     with open(args.output, "w", encoding="utf-8") as out:
         for i, file in enumerate(python_files):
-            try:
-                src = file.read_text(encoding="utf-8")
-                funcs, func_count = extract_functions(src)
-            except Exception:
-                raise IOError(
-                    f"Problem with reading and extracting the functions from file {i}."
-                )
+            src = file.read_text(encoding="utf-8")
+            funcs, func_count = extract_functions(src)
             total_functions += func_count
             total_missing += len(funcs)
 
@@ -105,14 +101,11 @@ def main() -> None:
                 continue
 
             out.write(f"# {file.relative_to(in_path.parent)}\n")
-            try:
-                for fn in funcs:
-                    doc = suggest_docstring(fn)
-                    out.write(f"Function: {fn.split('(')[0][4:]}\n")
-                    out.write(doc.full_docstring)
-                    out.write("\n\n")
-            except Exception:
-                raise Exception(f"Problem with generating docs for file {i}")
+            for fn in funcs:
+                doc = suggest_docstring(fn)
+                out.write(f"Function: {fn.split('(')[0][4:]}\n")
+                out.write(doc.full_docstring)
+                out.write("\n\n")
 
     if total_missing == 0:
         print("✨ All functions across all files already have docstrings!")

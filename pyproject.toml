@@ -9,6 +9,7 @@ dependencies = [
     "logfire>=3.14.1",
     "pydantic>=2.11.3",
     "pydantic-ai>=0.1.6",
+    "pydantic-ai-slim[anthropic]>=0.1.6",
 ]
 
 [tool.pyright]

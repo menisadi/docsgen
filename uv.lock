@@ -199,6 +199,7 @@ dependencies = [
     { name = "logfire" },
     { name = "pydantic" },
     { name = "pydantic-ai" },
+    { name = "pydantic-ai-slim", extra = ["anthropic"] },
 ]
 
 [package.metadata]
@@ -207,6 +208,7 @@ requires-dist = [
     { name = "logfire", specifier = ">=3.14.1" },
     { name = "pydantic", specifier = ">=2.11.3" },
     { name = "pydantic-ai", specifier = ">=0.1.6" },
+    { name = "pydantic-ai-slim", extras = ["anthropic"], specifier = ">=0.1.6" },
 ]
 
 [[package]]
