@@ -113,7 +113,6 @@ def main() -> None:
 
         file.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
-    # ── final messages ────────────────────────────────────────────────
     if total_added == 0:
         print("✨ All functions already documented.")
     else:
