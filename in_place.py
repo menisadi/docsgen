@@ -14,7 +14,8 @@ _SYS_PROMPT = (
 )
 
 agent = Agent(
-    "groq:llama-3.3-70b-versatile",
+    "anthropic:claude-3-5-sonnet-latest",
+    # "groq:llama-3.3-70b-versatile",
     instructions=_SYS_PROMPT,
     output_type=str,
 )
