@@ -118,11 +118,20 @@ def _extract_function_src(lines: list[str], node: ast.FunctionDef) -> str:
 
 
 def find_missing_docstrings(source: str, file_path: Path) -> list[Target]:
-    """Return :class:`Target` objects for functions without docstrings."""
-    tree = ast.parse(source)
+    """
+    Return Target objects for functions that lack a docstring.
+
+    Files that raise a SyntaxError (stub files, partially-checked-out code,
+    or code written for a newer Python than the running interpreter) are
+    skipped silently so the scan can continue.
+    """
+    try:
+        tree = ast.parse(source)
+    except SyntaxError:  # ← NEW: keep the audit alive
+        return []
+
     lines = source.splitlines()
     targets: list[Target] = []
-
     for node in ast.walk(tree):
         if isinstance(node, ast.FunctionDef) and ast.get_docstring(node) is None:
             targets.append(
@@ -235,11 +244,20 @@ def _inline_multiline(
 
 
 def _insert_docstring(lines: list[str], tgt: Target, doc: str) -> None:
-    """Insert *doc* under *tgt* in the list of *lines* in‑place."""
-    indent_spaces = " " * 4  # docstring one indent deeper than `def`
+    """
+    Insert *doc* directly under *tgt* inside *lines* (in-place).
+
+    The docstring is indented one level deeper than the *def* line so it
+    matches PEP-8/black expectations for function bodies inside any nesting
+    level (modules, classes, or nested functions).
+    """
+    def_line = lines[tgt.lineno - 1]
+    base_indent = def_line[: len(def_line) - len(def_line.lstrip())]  # leading ws
+    indent_spaces = base_indent + " " * 4  # one extra level
+
     indented = [indent_spaces + ln for ln in doc.splitlines()]
-    insert_at = tgt.lineno  # 1‑based index; insert after def line
-    lines[insert_at:insert_at] = indented + [""]
+    insert_at = tgt.lineno  # after the def
+    lines[insert_at:insert_at] = indented + [""]  # keep blank line
 
 
 # ---------------------------------------------------------------------------
