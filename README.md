@@ -1,5 +1,7 @@
 # docgaps — mind the docstring gap!
 
+===== **WIP** =====
+
 `docgaps` scans your Python codebase for functions that **lack a docstring** and lets you
 insert one on the spot – by hand or via an LLM – right from your terminal.
 
