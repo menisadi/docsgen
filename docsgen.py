@@ -6,6 +6,8 @@ from typing import Iterable, NamedTuple
 
 from tqdm import tqdm
 from pydantic_ai import Agent
+from pydantic_ai.models.openai import OpenAIModel
+from pydantic_ai.providers.openai import OpenAIProvider
 
 _SYS_PROMPT = (
     "You are an expert Python assistant.\n"
@@ -13,9 +15,17 @@ _SYS_PROMPT = (
     "Return *only* the docstring (including the triple‑quotes)."
 )
 
+model = OpenAIModel(
+    "phi3:mini",
+    provider=OpenAIProvider(
+        base_url="http://127.0.0.1:11434/v1",
+        api_key="sk-local",  # any non-empty string
+    ),
+)
 agent = Agent(
-    "anthropic:claude-3-5-sonnet-latest",
+    # "anthropic:claude-3-5-sonnet-latest",
     # "groq:llama-3.3-70b-versatile",
+    model,
     instructions=_SYS_PROMPT,
     output_type=str,
 )
