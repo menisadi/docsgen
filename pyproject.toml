@@ -1,9 +1,9 @@
 [project]
-name = "docsgen"
-version = "0.1.0"
-description = "Add your description here"
+name = "docgaps"
+version = "0.5.0"
+description = "Find and generate missing docs"
 readme = "README.md"
-requires-python = ">=3.13"
+requires-python = ">=3.10"
 dependencies = [
     "astor>=0.8.1",
     "logfire>=3.14.1",
