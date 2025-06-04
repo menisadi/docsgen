@@ -17,11 +17,11 @@ All previous flags (**‑q/‑‑quiet**, **‑r/‑‑report**, **‑‑show‑
 same.
 """
 
-from __future__ import annotations
-
 import ast
 import argparse
 import os
+import re
+
 import shlex
 import subprocess
 import sys
@@ -95,8 +95,30 @@ class Target(NamedTuple):
 
     @property
     def signature(self) -> str:
-        """Return the first line of *src* (i.e. the `def ...:` line)."""
-        return self.src.splitlines()[0].rstrip()
+        """
+        Return the complete `def …:` header, even if it spans
+        multiple lines or follows decorators/blank lines.
+        """
+        lines = self.src.splitlines()
+        sig_lines: list[str] = []
+
+        # skip leading blank lines and decorators
+        it = iter(lines)
+        for line in it:
+            if re.match(r"\s*(async\s+)?def\b", line):
+                sig_lines.append(line.rstrip())
+                break
+
+        # grab subsequent lines until the header ends with ':'
+        for line in it:
+            sig_lines.append(line.rstrip())
+            if line.rstrip().endswith(":"):
+                break
+
+        if not sig_lines:
+            raise ValueError("No function header found in src")
+
+        return "\n".join(sig_lines)
 
 
 # ---------------------------------------------------------------------------
